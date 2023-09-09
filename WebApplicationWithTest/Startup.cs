@@ -14,6 +14,11 @@ using System.Threading.Tasks;
 using WebApplicationWithTest.Models;
 using WebApplicationWithTest.Services;
 using WebApplicationWithTest.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using WebApplicationWithTest.Data;
+using WebApplicationWithTest.Configuration;
 
 
 
@@ -47,7 +52,29 @@ namespace WebApplicationWithTest
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApplicationWithTest", Version = "v1" });
+
+                // Define the JWT Bearer Authentication
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Name = "JWT Authentication",
+                    Description = "Enter JWT Bearer token **_only_**",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer", // must be lower case
+                    BearerFormat = "JWT",
+                    Reference = new OpenApiReference
+                    {
+                        Id = JwtBearerDefaults.AuthenticationScheme,
+                        Type = ReferenceType.SecurityScheme
+                    }
+                };
+                c.AddSecurityDefinition(securityScheme.Reference.Id, securityScheme);
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {securityScheme, new string[] { }}
+                });
             });
+
 
             //services.AddDbContext<ApplicationDbContext>(options =>
             //    options.UseSqlServer(Configuration.GetConnectionString("DBConnection")));
@@ -61,12 +88,48 @@ namespace WebApplicationWithTest
                     options.JsonSerializerOptions.PropertyNamingPolicy = null;
                 });
 
-            // IUserService and its implementation
+
+
+            // Configure JWT authentication from appsettings.json
+            var jwtSettings = Configuration.GetSection("JwtSettings");
+            services.Configure<JwtSettings>(jwtSettings);
+
+            var jwtSettingsOptions = jwtSettings.Get<JwtSettings>();
+            var Secret = Encoding.UTF8.GetBytes(jwtSettingsOptions.SecretKey);
+            var Encryption = Encoding.UTF8.GetBytes(jwtSettingsOptions.EncryptionKey);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+            {
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ClockSkew = TimeSpan.FromMinutes(1),
+                    RequireSignedTokens = true,
+                    RequireExpirationTime = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtSettingsOptions.ValidIssuer,
+                    ValidAudience = jwtSettingsOptions.ValidAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Secret),
+                    TokenDecryptionKey = new SymmetricSecurityKey(Encryption)
+                };
+            });
+
+
+
+
             services.AddScoped<IUserService, UserService>();
 
-            // IUserRepository and its implementation
             services.AddScoped<IUserRepository, UserRepository>();
 
+            services.AddScoped<IAuthService, AuthService>();
         }
 
 
@@ -83,6 +146,7 @@ namespace WebApplicationWithTest
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

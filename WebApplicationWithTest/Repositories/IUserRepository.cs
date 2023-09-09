@@ -10,5 +10,6 @@ namespace WebApplicationWithTest.Repositories
     {
         Task AddAsync(User user);
         Task<User> GetByIdAsync(int id);
+        User GetUserByUsernameAsync(string username);
     }
 }
