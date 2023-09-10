@@ -10,6 +10,7 @@ namespace WebApplicationWithTest.Models
         public int Id { get; set; }
         public string Name { get;  set; }
         public string Email { get;  set; }
+        public ICollection<Product> Products { get; set; } // One-to-many relationship with Product class
 
         public User(string name, string email)
         {
