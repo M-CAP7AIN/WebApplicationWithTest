@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using WebApplicationWithTest.Data;
 using WebApplicationWithTest.Configuration;
+using WebApplicationWithTest.Middleware;
 
 
 
@@ -144,9 +145,13 @@ namespace WebApplicationWithTest
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApplicationWithTest v1"));
             }
 
+
+            app.UseRequestHeaderCheckMiddleware();
+
             app.UseRouting();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

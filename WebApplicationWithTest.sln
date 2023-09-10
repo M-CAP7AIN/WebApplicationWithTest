@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.33027.164
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationWithTest", "WebApplicationWithTest\WebApplicationWithTest.csproj", "{85E80CEB-4F26-475B-8E0A-EB3136FD3D5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationWithTest", "WebApplicationWithTest\WebApplicationWithTest.csproj", "{85E80CEB-4F26-475B-8E0A-EB3136FD3D5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplicationNUnit", "WebApplicationNUnit\WebApplicationNUnit.csproj", "{F7D028A1-3DE0-4DD9-A771-488021AA4029}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplicationNUnit", "WebApplicationNUnit\WebApplicationNUnit.csproj", "{F7D028A1-3DE0-4DD9-A771-488021AA4029}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
