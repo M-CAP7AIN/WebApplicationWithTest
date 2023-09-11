@@ -12,6 +12,7 @@ namespace WebApplicationWithTest.Dtos
     {
         [Required]
         [JsonPropertyName("Name")]
+        [MaxLength(5)]
         public string Name { get; set; }
 
         [Required]
