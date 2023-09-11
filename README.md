@@ -10,3 +10,4 @@ Updating...
 7. JWT
 8. Configuration
 9. NUnit
+10.	Validation (Data Annotations)
